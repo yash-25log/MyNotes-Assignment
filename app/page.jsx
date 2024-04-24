@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useState, useEffect } from 'react';
 import Image from "next/image";
 import { Textarea } from "@/components/ui/textarea";
@@ -45,20 +45,23 @@ export default function Home() {
         <aside className="w-1/4 border-r border-gray-600 overflow-y-auto">
           <div className="flex flex-col">
             <div className="p-4 border-b border-gray-600">
-              <h1 className="text-xl font-bold">WEBNOTES</h1>
+              <h1 className="text-xl font-bold text-yellow-400">WEBNOTES</h1>
             </div>
             <ul className="flex flex-col space-y-2 p-4">
               {notes.map((note, index) => (
-                <li key={index} className="flex flex-col" onClick={() => setSelectedNote(note)}>
-                  <span className="font-semibold truncate">{note.title}</span>
+                <li key={index} className="flex flex-col cursor-pointer" onClick={() => setSelectedNote(note)}>
+                  <div className='flex justify-between'><span className="font-semibold truncate">{note.title}</span>
+                  <span className="cursor-pointer text-red-500 mt-2" >
+                    <TrashIcon className="h-4 w-4 ml-auto " onClick={() => deleteNote(index)}/>
+                  </span></div>
+                  
                   <span className="text-xs text-gray-400 mb-1">{note.date}</span>
                   <span className="text-sm text-gray-500">
-                    {note.content.substring(0, 50)}{note.content.length > 50 ? "..." : ""}
+                  {note.content.substring(0, 10)+ "..."}
                   </span>
-                  <span className="cursor-pointer text-red-500" onClick={() => deleteNote(index)}>
-                    <TrashIcon className="h-4 w-4 ml-auto" />
-                  </span>
+                  <hr />
                 </li>
+                
               ))}
             </ul>
           </div>
@@ -91,7 +94,7 @@ export default function Home() {
                 />
               </div>
             ) : (
-              <div className="text-center text-gray-400">No note selected</div>
+              <div className="text-center text-gray-400">Start creating a note ✨</div>
             )}
           </div>
         </div>
