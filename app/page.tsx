@@ -43,14 +43,23 @@ export default function Home() {
 
   const [data, setData] = useState({ name: "", email: "", password: "" });
   const [user, setUser] = useState({ email: "", password: "" });
-  const [newNote, setNewNote] = useState({
-    title: "",
-    content: "",
-    user_id: localStorage.getItem("user_id"),
-  });
+  // const [newNote, setNewNote] = useState({
+  //   title: "",
+  //   content: "",
+  //   user_id: localStorage.getItem("user_id"),
+  // });
+  const user_id = typeof window !== 'undefined' ? localStorage.getItem("user_id") : null;
+  console.log(user_id);
+
+const [newNote, setNewNote] = useState({
+  title: "",
+  content: "",
+  user_id: user_id,
+});
+
 
   const handleAddNote = async (e: any) => {
-    if (id) {
+    if (user_id) {
       console.log(newNote)
       e.preventDefault();
       console.log(newNote);
@@ -132,29 +141,30 @@ export default function Home() {
     }
   };
 
-  const id = localStorage.getItem("user_id");
+  // const id = localStorage.getItem("user_id");
   const handleLogout = () => {
     localStorage.clear();
     window.location.reload();
   };
 
+
   const [notesData, setNotesData] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
       const res = await fetch(
-        `https://notesbackend-nje2.onrender.com/notes/getNote?user_id=${id}`
+        `https://notesbackend-nje2.onrender.com/notes/getNote?user_id=${user_id}`
       );
       const data = await res.json();
       setNotesData(data.data);
     };
     fetchData();
-  }, [id]);
+  }, [user_id]);
   const [notesData1, setNotesData1] = useState([]);
 
   
   const handleGlobalSearch = async (e: any) => {
     try {
-      const res = await fetch(`https://notesbackend-nje2.onrender.com/notes/search?q=${e.target.value}&userId=${id}`);
+      const res = await fetch(`https://notesbackend-nje2.onrender.com/notes/search?q=${e.target.value}&userId=${user_id}`);
       const data = await res.json();
       console.log(data);
       setNotesData(data); // Check if this line throws any errors
@@ -163,6 +173,16 @@ export default function Home() {
       console.error('Error setting notes data:', error);
     }
   };
+  const handleButtonClick = () => {
+    if (user_id) {
+      // Call the logout function if the user is logged in
+      handleLogout();
+    } else {
+      // Call the function to get started if the user is not logged in
+      handleOpen();
+    }
+  };
+  
   return (
     <>
       <div className="flex h-screen bg-[#333] text-white">
@@ -174,11 +194,10 @@ export default function Home() {
               <input type="text" placeholder="Search Notes" className="bg-transparent text-white placeholder-gray-400 border mr-4" onChange={(e) => handleGlobalSearch(e)}/>
                
               </div>
-              {id ? (
-                <button onClick={handleLogout}>LogOut</button>
-              ) : (
-                <button onClick={handleOpen}>Get Started</button>
-              )}
+              <button onClick={handleButtonClick}>
+                {user_id ? "LogOut" : "Get Started"}
+              </button>
+
               <Modal
                 open={open}
                 onClose={handleClose}
