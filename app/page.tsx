@@ -62,7 +62,7 @@ export default function Home() {
         body: JSON.stringify(newNote),
       };
       const res = await fetch(
-        "http://localhost:8000/notes/addNote",
+        "https://notesbackend-nje2.onrender.com/notes/addNote",
         requestOptions
       );
       console.log(res);
@@ -93,7 +93,7 @@ export default function Home() {
     };
 
     const res = await fetch(
-      "http://localhost:8000/user/register",
+      "https://notesbackend-nje2.onrender.com/user/register",
       requestOptions
     );
     if (res.ok) {
@@ -119,7 +119,7 @@ export default function Home() {
       body: JSON.stringify(user),
     };
 
-    const res = await fetch("http://localhost:8000/user/login", requestOptions);
+    const res = await fetch("https://notesbackend-nje2.onrender.com/user/login", requestOptions);
     if (res.ok) {
       const data = await res.json();
       console.log(data.data);
@@ -142,7 +142,7 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       const res = await fetch(
-        `http://localhost:8000/notes/getNote?user_id=${id}`
+        `https://notesbackend-nje2.onrender.com/notes/getNote?user_id=${id}`
       );
       const data = await res.json();
       setNotesData(data.data);
@@ -154,7 +154,7 @@ export default function Home() {
   
   const handleGlobalSearch = async (e: any) => {
     try {
-      const res = await fetch(`http://localhost:8000/notes/search?q=${e.target.value}&userId=${id}`);
+      const res = await fetch(`https://notesbackend-nje2.onrender.com/notes/search?q=${e.target.value}&userId=${id}`);
       const data = await res.json();
       console.log(data);
       setNotesData(data); // Check if this line throws any errors
@@ -283,10 +283,10 @@ export default function Home() {
                   <div className="flex justify-between">
                     <span className="font-semibold truncate">{note.title}</span>
                     <span className="cursor-pointer text-red-500 mt-2">
-                      <TrashIcon
+                      {/* <TrashIcon
                         className="h-4 w-4 ml-auto "
                         // onClick={() => deleteNote(index)}
-                      />
+                      /> */}
                     </span>
                   </div>
 
