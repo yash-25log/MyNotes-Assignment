@@ -2,8 +2,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { Textarea } from "@/components/ui/textarea";
-import GoogleAuth from "@/components/login";
-import { GoogleOAuthProvider } from "@react-oauth/google";
 import Modal from "@mui/material/Modal";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
@@ -30,11 +28,16 @@ interface Note {
 export default function Home() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [newNoteTitle, setNewNoteTitle] = useState<string>("");
-  const [selectedNote, setSelectedNote] = useState<Note | null>(null); // [1
+  const [selectedNote, setSelectedNote] = useState<Note>(); // [1
   // Load notes from local storage on component mount
   const [open, setOpen] = React.useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  
+  const handleModalOpen = () => setModalOpen(true);
+  const handleModalClose = () => setModalOpen(false);
 
   const [login, setLogin] = useState(false);
 
@@ -43,11 +46,12 @@ export default function Home() {
   const [newNote, setNewNote] = useState({
     title: "",
     content: "",
-    id: localStorage.getItem("user_id"),
+    user_id: localStorage.getItem("user_id"),
   });
 
   const handleAddNote = async (e: any) => {
     if (id) {
+      console.log(newNote)
       e.preventDefault();
       console.log(newNote);
       const requestOptions = {
@@ -147,13 +151,29 @@ export default function Home() {
   }, [id]);
   const [notesData1, setNotesData1] = useState([]);
 
+  
+  const handleGlobalSearch = async (e: any) => {
+    try {
+      const res = await fetch(`http://localhost:8000/notes/search?q=${e.target.value}&userId=${id}`);
+      const data = await res.json();
+      console.log(data);
+      setNotesData(data); // Check if this line throws any errors
+
+    } catch (error) {
+      console.error('Error setting notes data:', error);
+    }
+  };
   return (
     <>
       <div className="flex h-screen bg-[#333] text-white">
         <aside className="w-1/4 border-r border-gray-600 overflow-y-auto">
           <div className="flex flex-col">
             <div className="p-4 border-b border-gray-600">
-              <h1 className="text-xl font-bold text-yellow-400">WEBNOTES </h1>
+              <div className="flex gap-2">
+              <h1 className="text-xl font-bold text-yellow-400 ">WEBNOTES </h1>
+              <input type="text" placeholder="Search Notes" className="bg-transparent text-white placeholder-gray-400 border mr-4" onChange={(e) => handleGlobalSearch(e)}/>
+               
+              </div>
               {id ? (
                 <button onClick={handleLogout}>LogOut</button>
               ) : (
@@ -254,11 +274,11 @@ export default function Home() {
 
             
             <ul className="flex flex-col space-y-2 p-4">
-              {notes.map((note, index) => (
+              {notesData && notesData.map((note : any, index : number) => (
                 <li
                   key={index}
                   className="flex flex-col cursor-pointer"
-                  onClick={() => setSelectedNote(note)}
+                  onClick={() => { setSelectedNote(note); handleModalOpen(); }}
                 >
                   <div className="flex justify-between">
                     <span className="font-semibold truncate">{note.title}</span>
@@ -270,15 +290,34 @@ export default function Home() {
                     </span>
                   </div>
 
-                  <span className="text-xs text-gray-400 mb-1">
+
+                  {/* <span className="text-xs text-gray-400 mb-1">
                     {note.date}
-                  </span>
+                  </span> */}
                   <span className="text-sm text-gray-500">
                     {note.content.substring(0, 10) + "..."}
                   </span>
                   <hr />
                 </li>
               ))}
+              <Modal 
+  aria-labelledby="modal-modal-title"
+  aria-describedby="modal-modal-description"
+  open={modalOpen} 
+  onClose={handleModalClose}
+>
+  <div className="fixed inset-0 overflow-y-auto flex items-center justify-center">
+    <div className="bg-white rounded-lg p-8 max-w-md w-full">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold text-gray-500">{selectedNote?.title}</h2>
+        <button className="text-gray-500 hover:text-gray-800" onClick={handleModalClose}>Close</button>
+      </div>
+      <p className="text-gray-700">{selectedNote?.content}</p>
+      {/* Additional note details */}
+    </div>
+  </div>
+</Modal>
+
             </ul>
           </div>
         </aside>
@@ -300,16 +339,19 @@ export default function Home() {
               Add Note 
             </button>
           </div>
+
+          
           <div className="flex-1 p-4">
-            <Textarea
+            <input
               className="bg-transparent p-4 text-white placeholder-gray-400"
               placeholder="Start typing your note here..."
               value={newNote.content}
-              onChange={(e) => ({ ...newNote, content: e.target.value })}
+              onChange={(e) => setNewNote({ ...newNote, content: e.target.value })}
+            
             />
           </div>
         </div>
-      </div>
+      </div>  
     </>
   );
 }
