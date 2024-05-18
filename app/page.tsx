@@ -71,7 +71,7 @@ const [newNote, setNewNote] = useState({
         body: JSON.stringify(newNote),
       };
       const res = await fetch(
-        "https://notesbackend-nje2.onrender.com/notes/addNote",
+        "https://ai-agent-423410.uc.r.appspot.com/notes/addNote",
         requestOptions
       );
       console.log(res);
@@ -102,7 +102,7 @@ const [newNote, setNewNote] = useState({
     };
 
     const res = await fetch(
-      "https://notesbackend-nje2.onrender.com/user/register",
+      "https://ai-agent-423410.uc.r.appspot.com/user/register",
       requestOptions
     );
     if (res.ok) {
@@ -128,7 +128,7 @@ const [newNote, setNewNote] = useState({
       body: JSON.stringify(user),
     };
 
-    const res = await fetch("https://notesbackend-nje2.onrender.com/user/login", requestOptions);
+    const res = await fetch("https://ai-agent-423410.uc.r.appspot.com/user/login", requestOptions);
     if (res.ok) {
       const data = await res.json();
       console.log(data.data);
@@ -152,7 +152,7 @@ const [newNote, setNewNote] = useState({
   useEffect(() => {
     const fetchData = async () => {
       const res = await fetch(
-        `https://notesbackend-nje2.onrender.com/notes/getNote?user_id=${user_id}`
+        `https://ai-agent-423410.uc.r.appspot.com/notes/getNote?user_id=${user_id}`
       );
       const data = await res.json();
       setNotesData(data.data);
@@ -164,7 +164,7 @@ const [newNote, setNewNote] = useState({
   
   const handleGlobalSearch = async (e: any) => {
     try {
-      const res = await fetch(`https://notesbackend-nje2.onrender.com/notes/search?q=${e.target.value}&userId=${user_id}`);
+      const res = await fetch(`https://ai-agent-423410.uc.r.appspot.com/notes/search?q=${e.target.value}&userId=${user_id}`);
       const data = await res.json();
       console.log(data);
       setNotesData(data); // Check if this line throws any errors
